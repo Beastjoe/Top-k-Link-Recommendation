@@ -13,15 +13,16 @@ def generate_dataset(X, train_fraction, valid_fraction=0.1, test_fraction=0.3):
     :param test_fraction: the fraction to keep the observed links in test set
     :return: n*n train matrix, n*n valid matrix, n*n test matrix, test list
     """
-    X_train = np.zeros(np.shape(X))
-    X_valid = np.zeros(np.shape(X))
-    X_test = np.zeros(np.shape(X))
+    N = int(np.size(X, 0)/10)
+    X_train = np.zeros((N, N))
+    X_valid = np.zeros((N, N))
+    X_test = np.zeros((N, N))
     test_list = []
     random.seed()
 
-    for i in range(np.shape(X)[0]):
+    for i in range(N):
         count = 0
-        for j in range(np.shape(X)[1]):
+        for j in range(N):
             if X[i][j] == 1:
                 p = random.random()
                 if p >= 1 - test_fraction:
@@ -34,7 +35,7 @@ def generate_dataset(X, train_fraction, valid_fraction=0.1, test_fraction=0.3):
                 elif p <= train_fraction:
                     X_train[i][j] = 1
 
-    return X_train, X_valid, X_test, test_list
+    return X_train, X_valid, X_test, np.array(test_list, dtype=np.int64)
 
 
 def test(X_estimate, X_test, test_list, method="AUC", k=1):
